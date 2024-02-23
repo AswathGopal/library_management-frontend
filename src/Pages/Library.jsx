@@ -63,7 +63,10 @@ const Library = () => {
   useEffect(() => {
     getemployee();
   }, []);
-
+ 
+  const ViewTable=()=>{
+    setClicked(true);
+  }
 
   console.log(data);
   const handleSubmit = async (e) => {
@@ -74,7 +77,6 @@ const Library = () => {
         "http://localhost:8000/librarysubmit",
         employee
       );
-      setClicked(true);
       setAlert({ type: "success", message: response.data });
       // Clear form fields on success if needed
 
@@ -200,12 +202,19 @@ const Library = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-between">
             <button
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
-              Submit
+              Add
+            </button>
+            <button
+              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={ViewTable}
+            >
+              View table
             </button>
           </div>
         </form>
@@ -216,16 +225,13 @@ const Library = () => {
             value={data}
             filters={filters}
             filterDisplay="row"
-            globalFilterFields={[
-              "title",
-              "author",
-              "subject",
-            ]}
+            globalFilterFields={["title", "author", "subject"]}
             header={header}
             emptyMessage="No customers found."
-            paginator rows={10}
+            paginator
+            rows={10}
             rowsPerPageOptions={[1, 5, 10, 25, 50, 100]}
-            >
+          >
             <Column
               field="title"
               header="Book Name"
