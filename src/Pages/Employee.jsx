@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useEffect } from "react";
+import { useNavigate} from "react-router-dom";
 const Employee = () => {
+  const navigate=useNavigate();
   const [employee, setEmployee] = useState({
     name: "",
     id: "",
@@ -20,7 +22,7 @@ const Employee = () => {
   };
   const getemployee = () => {
     axios
-      .get("http://localhost:8000/employee")
+      .get("https://employee-backend-ylon.onrender.com/employee")
       .then((result) => {
         if (result.data.Status) {
           setData(result.data.Result);
@@ -29,19 +31,45 @@ const Employee = () => {
       .catch((err) => console.log(err));
   };
 
+ const Logout=()=>{
+  axios
+    .get("https://employee-backend-ylon.onrender.com/logout")
+    .then((result) => {
+      if (result.data.Status) {
+        localStorage.removeItem("valid");
+        navigate("/");
+      }
+    })
+    .catch((err) => console.log(err));
+ }
+
+ const handleDelete = (id) => {
+   axios
+     .delete("https://employee-backend-ylon.onrender.com/delete_employee/" + id)
+     .then((result) => {
+       if (result.data.Status) {
+         window.location.reload();
+       }
+     })
+     .catch((err) => console.log(err));
+ }
+
+ const ViewTable = () => {
+   setClicked(true);
+ };
   useEffect(() => {
     getemployee();
   }, []);
+
   console.log(data);
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(employee);
     try {
       const response = await axios.post(
-        "http://localhost:8000/submit",
+        "https://employee-backend-ylon.onrender.com/submit",
         employee
       );
-      setClicked(true);
       setAlert({ type: "success", message: response.data });
       // Clear form fields on success if needed
 
@@ -62,7 +90,16 @@ const Employee = () => {
   };
 
   return (
-    <div className="mt-5">
+    <div className="">
+      <div className="flex justify-end mr-3 mt-2">
+        <button
+          className="bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded"
+          onClick={Logout}
+          type="button"
+        >
+          Logout
+        </button>
+      </div>
       <div className="max-w-md min-h-height mx-auto ">
         <div className="flex items-center justify-center text-lg font-semibold ">
           Employee Form
@@ -71,7 +108,7 @@ const Employee = () => {
           <div
             className={`alert ${
               alert.type === "success" ? "bg-green-500" : "bg-red-500"
-            } text-white px-4 py-2 mb-4 rounded`}
+            }  px-4 py-2 mb-4 rounded`}
           >
             {alert.message}
           </div>
@@ -214,12 +251,19 @@ const Employee = () => {
               onChange={handleChange}
             />
           </div>
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-between">
             <button
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               type="submit"
             >
               Submit
+            </button>
+            <button
+              className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              type="button"
+              onClick={ViewTable}
+            >
+              View table
             </button>
           </div>
         </form>
@@ -236,6 +280,7 @@ const Employee = () => {
                 <th className="px-4 py-2">Gender</th>
                 <th className="px-4 py-2">Designation</th>
                 <th className="px-4 py-2">Salary</th>
+                <th className="px-4 py-2">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -248,6 +293,14 @@ const Employee = () => {
                   <td className="border px-4 py-2">{e.gender}</td>
                   <td className="border px-4 py-2">{e.designation}</td>
                   <td className="border px-4 py-2">{e.salary}</td>
+                  <td className="border px-4 py-2">
+                    <button
+                      className="bg-red-500 px-2 py-2 text-white rounded"
+                      onClick={() => handleDelete(e.employee_id)}
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

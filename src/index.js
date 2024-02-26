@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import 'primereact/resources/themes/lara-light-indigo/theme.css'; 
 import { PrimeReactProvider } from 'primereact/api';
+import "bootstrap/dist/css/bootstrap.min.css";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
